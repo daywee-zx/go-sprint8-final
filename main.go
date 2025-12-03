@@ -143,7 +143,7 @@ func main() {
 	err = service.Delete(p.Number)
 	if err != nil {
 		fmt.Println(err)
-		// err to be expected
+		return
 	}
 
 	// вывод посылок клиента

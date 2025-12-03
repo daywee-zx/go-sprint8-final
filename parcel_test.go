@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -40,21 +41,22 @@ func TestAddGetDelete(t *testing.T) {
 	// add
 	id, err := store.Add(parcel)
 	require.NoError(t, err)
-	require.NotEqual(t, 0, id)
+	assert.NotEqual(t, 0, id)
 
 	// get
 	newParcel, err := store.Get(id)
 	require.NoError(t, err)
-	require.Equal(t, parcel.Client, newParcel.Client)
-	require.Equal(t, parcel.Status, newParcel.Status)
-	require.Equal(t, parcel.Address, newParcel.Address)
-	require.Equal(t, parcel.CreatedAt, newParcel.CreatedAt)
+	assert.Equal(t, id, newParcel.Number)
+	assert.Equal(t, parcel.Client, newParcel.Client)
+	assert.Equal(t, parcel.Status, newParcel.Status)
+	assert.Equal(t, parcel.Address, newParcel.Address)
+	assert.Equal(t, parcel.CreatedAt, newParcel.CreatedAt)
 
 	// delete
 	err = store.Delete(id)
 	require.NoError(t, err)
 
-	newParcel, err = store.Get(id)
+	_, err = store.Get(id)
 	require.Error(t, err)
 }
 
@@ -70,7 +72,7 @@ func TestSetAddress(t *testing.T) {
 	// add
 	id, err := store.Add(parcel)
 	require.NoError(t, err)
-	require.NotEqual(t, 0, id)
+	assert.NotEqual(t, 0, id)
 
 	// set address
 	newAddress := "new test address"
@@ -80,7 +82,7 @@ func TestSetAddress(t *testing.T) {
 	// check
 	newParcel, err := store.Get(id)
 	require.NoError(t, err)
-	require.Equal(t, newAddress, newParcel.Address)
+	assert.Equal(t, newAddress, newParcel.Address)
 }
 
 // TestSetStatus проверяет обновление статуса
@@ -95,7 +97,7 @@ func TestSetStatus(t *testing.T) {
 	// add
 	id, err := store.Add(parcel)
 	require.NoError(t, err)
-	require.NotEqual(t, 0, id)
+	assert.NotEqual(t, 0, id)
 
 	// set status
 	// обновите статус, убедитесь в отсутствии ошибки
@@ -105,7 +107,7 @@ func TestSetStatus(t *testing.T) {
 	// check
 	newParcel, err := store.Get(id)
 	require.NoError(t, err)
-	require.Equal(t, ParcelStatusRegistered, newParcel.Status)
+	assert.Equal(t, ParcelStatusRegistered, newParcel.Status)
 }
 
 // TestGetByClient проверяет получение посылок по идентификатору клиента
@@ -133,7 +135,7 @@ func TestGetByClient(t *testing.T) {
 	for i := 0; i < len(parcels); i++ {
 		id, err := store.Add(parcels[i])
 		require.NoError(t, err)
-		require.NotEqual(t, 0, id)
+		assert.NotEqual(t, 0, id)
 
 		parcels[i].Number = id
 
@@ -143,7 +145,7 @@ func TestGetByClient(t *testing.T) {
 	// get by client
 	storedParcels, err := store.GetByClient(client)
 	require.NoError(t, err)
-	require.Len(t, storedParcels, len(parcels))
+	assert.Len(t, storedParcels, len(parcels))
 
 	// check
 	for _, parcel := range storedParcels {
@@ -151,7 +153,7 @@ func TestGetByClient(t *testing.T) {
 		// убедитесь, что все посылки из storedParcels есть в parcelMap
 		// убедитесь, что значения полей полученных посылок заполнены верно
 		checkParcel, ok := parcelMap[parcel.Number]
-		require.True(t, ok)
-		require.Equal(t, checkParcel, parcel)
+		assert.True(t, ok)
+		assert.Equal(t, checkParcel, parcel)
 	}
 }
