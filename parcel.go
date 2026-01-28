@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"errors"
 )
 
 type ParcelStore struct {
@@ -89,6 +88,7 @@ func (s ParcelStore) SetAddress(number int, address string) error {
 		sql.Named("address", address),
 		sql.Named("number", number),
 		sql.Named("status", ParcelStatusRegistered))
+
 	if err != nil {
 		return err
 	}
@@ -103,20 +103,12 @@ func (s ParcelStore) Delete(number int) error {
 		"WHERE number = :number AND status = :status",
 		sql.Named("number", number),
 		sql.Named("status", ParcelStatusRegistered))
+
 	err := row.Scan(&status)
+
 	if err != nil {
 		return err
 	}
-
-	if status != ParcelStatusRegistered {
-		return errors.New("invalid status: parcel not registered")
-	}
-
-	_, err = s.db.Exec("DELETE FROM parcel WHERE number = :number",
-		sql.Named("number", number))
-	if err != nil {
-		return err
-	}
-
+	
 	return nil
 }
