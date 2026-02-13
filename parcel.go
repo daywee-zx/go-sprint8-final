@@ -99,7 +99,7 @@ func (s ParcelStore) SetAddress(number int, address string) error {
 func (s ParcelStore) Delete(number int) error {
 	var status string
 
-	row := s.db.QueryRow("SELECT status FROM parcel "+
+	row := s.db.QueryRow("DELETE FROM parcel "+
 		"WHERE number = :number AND status = :status",
 		sql.Named("number", number),
 		sql.Named("status", ParcelStatusRegistered))
